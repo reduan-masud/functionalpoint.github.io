@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <style>
+        html {
+          scroll-behavior: smooth;
+        }
+        </style>
+        <title>Functional Point Calculation</title>
+    </head>
+    <body>
+
+    <div class="container">
+    <div class="card mt-1">
+        <div class="card-body">
+            <div class="row mb-3">
+              <label for="input" class="col-sm-2 col-form-label col-form-label-sm">Input</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control form-control-sm" id="input" placeholder="Input Value">
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label for="output" class="col-sm-2 col-form-label col-form-label-sm">Output</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control form-control-sm" id="output" placeholder="Output">
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label for="inquiries" class="col-sm-2 col-form-label col-form-label-sm">Inquiries</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control form-control-sm" id="inquiries" placeholder="Inquiries">
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label for="files" class="col-sm-2 col-form-label col-form-label-sm">Files</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control form-control-sm" id="files" placeholder="Files">
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label for="interface" class="col-sm-2 col-form-label col-form-label-sm">Interface</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control form-control-sm" id="interface" placeholder="Interface">
+              </div>
+            </div>
+            <div class="row mb-3">
+                <label for="complexityAdjustmentValue" class="col-sm-2 col-form-label col-form-label-sm">Complexity Adjustment Value (CAV) </label>
+                <div class="col-sm-10">
+                    <select id="complexityAdjustmentValue" class="form-select" aria-label="Default select example">
+                      <option selected>Open this select menu</option>
+                      <option value="0">No Influence (0)</option>
+                      <option value="1">Incidental (1)</option>
+                      <option value="2">Moderate (2)</option>
+                      <option value="3">Average (3)</option>
+                      <option value="4">Significant (4)</option>
+                      <option value="5">Essential (5)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label for="weightingFactor" class="col-sm-2 col-form-label col-form-label-sm">Weighting Factor </label>
+                <div class="col-sm-10">
+                    <select id="weightingFactor" class="form-select" aria-label="Default select example">
+                      <option selected>Open this select menu</option>
+                      <option value="0">Simple</option>
+                      <option value="1">Average</option>
+                      <option value="2">Complex</option>
+                    </select>
+                </div>
+            </div>
+            <div class="d-grid gap-2">
+              <button class="btn btn-success" id="calc" type="button">Calculate Functional Point</button>
+            </div>
+        </div>
+
+
+    </div>
+    <div id="showHere"></div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <!--Custom Script-->
+    <script type="text/javascript">
+
+        const btn = document.getElementById("calc");
+        let result = document.getElementById("showHere");
+
+        btn.addEventListener("click",()=>{
+            result.innerHTML = "";
+            let inputs = {
+                input : document.getElementById("input"),
+                output : document.getElementById("output"),
+                inquiries : document.getElementById("inquiries"),
+                file : document.getElementById("files"),
+                interface : document.getElementById("interface")
+            }
+
+            let selects = {
+                cav : document.getElementById("complexityAdjustmentValue"),
+                wf : document.getElementById("weightingFactor")
+            }
+            let ok = true;
+            for(let prop in inputs)
+            {
+                if(inputs[`${prop}`].value == "")
+                {
+                    inputs[prop].classList.add("border");
+                    inputs[prop].classList.add("border-danger");
+                    ok = false;
+                }
+                else
+                {
+                    inputs[prop].classList.remove("border");
+                    inputs[prop].classList.remove("border-danger");
+
+                }
+            }
+
+            for(let prop in selects)
+            {
+                if(selects[prop].selectedIndex == 0)
+                {
+                    selects[prop].classList.add("border");
+                    selects[prop].classList.add("border-danger");
+                    ok = false;
+                }
+                else
+                {
+                    selects[prop].classList.remove("border");
+                    selects[prop].classList.remove("border-danger");
+                }
+            }
+
+            const simple = {
+                input : 3,
+                output : 4,
+                inquiries : 3,
+                file : 7,
+                interface : 5
+            }
+
+            const average = {
+                input : 4,
+                output : 5,
+                inquiries : 4,
+                file : 10,
+                interface : 7
+            }
+
+            const complex = {
+                input : 6,
+                output : 7,
+                inquiries : 6,
+                file : 15,
+                interface : 10
+            }
+
+            if(ok)
+            {
+                let cavValue = selects.cav.item(selects.cav.selectedIndex).value;
+                let wfValue = selects.wf.item(selects.wf.selectedIndex).value;
+                let weightFactor;
+                let weightFactorType;
+                if(wfValue == 0) {
+
+                    weightFactor = simple;
+                    weightFactorType = "Simple";
+                } else if(wfValue == 1) {
+
+                    weightFactor = average;
+                    weightFactorType = "Average"
+                } else if(wfValue == 2) {
+
+                    weightFactor = complex;
+                    weightFactorType = "Complex";
+                }
+                let caf = 0.65 + 0.01 * cavValue;
+                let mainHtml = document.createElement("div");
+                let html = document.createElement("div");
+                let table = `<table class="table">
+                              <thead>
+                                <tr>
+                                  <th scope="col">###</th>
+                                  <th scope="col">Count</th>
+                                  <th scope="col">*</th>
+                                  <th scope="col">${weightFactorType}</th>
+                                  <th scope="col">raw FP</th>
+                                </tr>
+                              </thead>
+                              <tbody>`
+                let totalFP = 0;
+                for(let prop in weightFactor)
+                {
+                    table += `<tr>`;
+                    table += ` <th scope="row">${prop}</th>`
+                    table += ` <td>${inputs[prop].value}</td>`;
+                    table += ` <td>*</td>`;
+                    table += ` <td>${weightFactor[prop]}</td>`;
+                    table += ` <td>${inputs[prop].value * weightFactor[prop]}</td>`;
+                    table += `</tr>`;
+
+                    totalFP += inputs[prop].value * weightFactor[prop];
+                }
+                table +=       `<tr>
+                                    <td colspan="4"> Total raw FP </td>
+                                    <td>${totalFP}</td>
+                                </tr>`;
+                table +=       `
+                              </tbody>
+                            </table>`
+
+                let cafElement = document.createElement("div");
+
+                cafElement.innerHTML = `
+                    CAF = 0.65 + 0.01 * CAV <br>
+                    CAF = 0.65 + 0.01 * ${cavValue}<br>
+                    CAF = ${caf}<br>
+                    `;
+                mainHtml.appendChild(cafElement);
+                html.innerHTML = table;
+                mainHtml.appendChild(html);
+
+
+                let fp = totalFP * caf;
+                let fpElement = document.createElement("div");
+                fpElement.innerHTML = `
+                    FP = (total raw FP * CAF) <br>
+                    FP = (${totalFP} * ${caf}) <br>
+                    Functional Point (FP) = ${fp}
+                `
+                mainHtml.appendChild(fpElement);
+                result.classList.add("card");
+                result.classList.add("mt-3");
+                result.classList.add("mb-3");
+
+                mainHtml.setAttribute("class","card-body");
+                result.appendChild(mainHtml)
+
+
+                $('html, body').animate({
+                    scrollTop: $("#showHere").offset().top
+                }, 800, function(){
+                    //window.location.hash = hash;
+                });
+            }
+
+
+
+
+
+        });
+    </script>
+    </body>
+</html>
