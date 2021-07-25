@@ -84,18 +84,21 @@
 
             const modes ={
                 organic:{
+                    string : "Organic",
                     a : 2.4,
                     b : 1.05,
                     c : 2.5,
                     d : 0.38
                 },
                 semiOrganic:{
+                    string : "Semi Organic",
                     a : 3.0,
                     b : 1.12,
                     c : 2.5,
                     d : 0.35
                 },
                 embedded:{
+                    string : "Embedded",
                     a : 3.6,
                     b : 1.20,
                     c : 2.5,
@@ -109,7 +112,7 @@
                 let mainHtml = document.createElement("div");
                 let html = document.createElement("div");
                 let table = `
-                            <h1>  </h1>
+                            <div id="pre"><div>
                             <table class="table">
                               <thead>
                                 <tr>
@@ -169,6 +172,68 @@
                 table +=       `
                               </tbody>
                             </table>`
+
+                //Effort Calculation
+                let effortElm = document.createElement("div")
+                let html2 = "<center><h2>Effort Calculation</h2></center>";
+                for(let mode in modes)
+                {
+                    html2 +=`<h3>${modes[mode]["string"]}</h3>
+                    E = a * (KLOC)^b <br>
+                    E = ${modes[mode]["a"]} * ${kloc.value}^${modes[mode]["b"]} <br>
+                    E = ${modes[mode]["E"]} staff-month
+
+                    `
+                }
+                effortElm.innerHTML = html2;
+                mainHtml.appendChild(effortElm);
+
+                //Time for Development Calculation
+                let TtevElm = document.createElement("div")
+                html2 = "<center><h2>Time for Development (TDEV) Calculation</h2></center>";
+                for(let mode in modes)
+                {
+                    html2 +=`<h3>${modes[mode]["string"]}</h3>
+                    TDEV = c * (E)^d <br>
+                    TDEV = ${modes[mode]["c"]} * ${modes[mode]["E"]}^${modes[mode]["d"]} <br>
+                    TDEV = ${modes[mode]["TDEV"]} month
+
+                    `
+                }
+                TtevElm.innerHTML = html2;
+                mainHtml.appendChild(TtevElm);
+
+                //Time for Development Calculation
+                let SSElm = document.createElement("div")
+                html2 = "<center><h2> Avg Staff Size Calculation</h2></center>";
+                for(let mode in modes)
+                {
+                    html2 +=`<h3>${modes[mode]["string"]}</h3>
+                    SS =  E / TDEV <br>
+                    SS = ${modes[mode]["E"]} / ${modes[mode]["TDEV"]} <br>
+                    SS = ${modes[mode]["SS"]} staff
+
+                    `
+                }
+                SSElm.innerHTML = html2;
+                mainHtml.appendChild(SSElm);
+
+
+                //Time for Development Calculation
+                let PElm = document.createElement("div")
+                html2 = "<center><h2> Productivity Calculation</h2></center>";
+                for(let mode in modes)
+                {
+                    html2 +=`<h3>${modes[mode]["string"]}</h3>
+                    P =  KLOC / E <br>
+                    P = ${kloc.value} / ${modes[mode]["E"]} <br>
+                    P = ${modes[mode]["P"] / 1000} kloc / staff-month <br>
+                    P = ${modes[mode]["P"]} loc/staff-month
+
+                    `
+                }
+                PElm.innerHTML = html2;
+                mainHtml.appendChild(PElm);
 
 
                 html.innerHTML = table;
